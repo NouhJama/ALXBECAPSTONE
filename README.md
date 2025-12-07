@@ -5,7 +5,7 @@
 -The project is DRF API for crypto portfolio management.
 
 🛠️ 
-# PROJECT DESCRIPTION
+# PROJECT TOOLS AND TECH STACK
 ▶️DRF
 ▶️MYSQL
 ▶️HTML
