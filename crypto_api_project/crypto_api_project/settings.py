@@ -27,6 +27,19 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Custom User Model
+AUTH_USER_MODEL = "portfolio.CustomUser"
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.BasicAuthentication",    
+    ]
+}
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -78,7 +91,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "crypto_portfolio_db",
         "USER": "root",
-        "PASSWORD": "your_password",
+        "PASSWORD": "Ilov3maimom@098",
         "HOST": "localhost",
         "PORT": "3306",
         "OPTIONS": {

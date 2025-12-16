@@ -1,3 +1,50 @@
 from django.db import models
+from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
+
+# User Model
+class CustomUser(AbstractUser):
+    email = models.EmailField(unique=True)
+
+    def __str__(self):
+        return self.username
+
+
+#Portofolio, Asset and Transaction models
+class Portfolio(models.Model):
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="portfolios"
+    )
+    name = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.user.username}"
+
+
+class Asset(models.Model):
+    portfolio = models.ForeignKey(
+        Portfolio, on_delete=models.CASCADE, related_name="assets"
+    )
+    symbol = models.CharField(max_length=10)
+    quantity = models.DecimalField(max_digits=20, decimal_places=8)
+    purchase_price = models.DecimalField(max_digits=20, decimal_places=8)
+    purchase_date = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.quantity} of {self.symbol} in {self.portfolio.name}"
+    
+class Transaction(models.Model):
+    asset = models.ForeignKey(
+        Asset, on_delete=models.CASCADE, related_name="transactions"
+    )
+    transaction_type = models.CharField(max_length=10, choices=[("BUY", "Buy"), ("SELL", "Sell")])
+    quantity = models.DecimalField(max_digits=20, decimal_places=8)
+    price_per_unit = models.DecimalField(max_digits=20, decimal_places=8)
+    transaction_date = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.transaction_type} {self.quantity} of {self.asset.symbol} at {self.price_per_unit} on {self.transaction_date}"
+    
