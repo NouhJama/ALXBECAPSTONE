@@ -6,7 +6,15 @@ from django.contrib.auth.models import AbstractUser
 
 # User Model
 class CustomUser(AbstractUser):
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, blank=False, null=False)
+
+    #profile fields 
+    phone_number = models.CharField(max_length=15, blank=True, null=True)   
+    bio = models.TextField(blank=True, null=True)
+    profile_picture = models.ImageField(upload_to="profile_pics/", blank=True, null=True)
+    preferred_currency = models.CharField(max_length=10, default="USD")
+    date_joined = models.DateTimeField(auto_now_add=True)
+
 
     def __str__(self):
         return self.username
