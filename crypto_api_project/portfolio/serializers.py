@@ -24,3 +24,24 @@ class UserProfileSerializer(serializers.ModelSerializer):
         if get_user_model.objects.filter(email=value).exists():
             raise serializers.ValidationError("Email is already in use.")
         return value
+    
+# Portfolio Serializer
+class PortfolioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Portfolio
+        fields = ['id', 'owner', 'name', 'created_at']
+        read_only_fields = ['owner', 'created_at']
+
+# Asset Serializer
+class AssetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Asset
+        fields = ['id', 'portfolio', 'symbol', 'quantity', 'purchase_price', 'purchase_date']
+        read_only_fields = ['portfolio']
+
+# Transaction Serializer
+class TransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = ['id', 'asset', 'transaction_type', 'quantity', 'price_per_unit', 'transaction_date']
+        read_only_fields = ['asset']
