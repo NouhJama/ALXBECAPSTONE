@@ -1,0 +1,8 @@
+python>= 3.10, < 3.12
+Django>= 6.0, < 7.0
+djangorestframework>= 3.14.0, < 4.0
+mysqlclient>= 2.1.0, < 3.0
+Pillow>= 10.0.0
+
+Note: Enable TokenAuthentication and set default permission classes to IsAuthenticated in DRF settings.
+djangorestframework-authtoken>= 1.1.0, < 2.
