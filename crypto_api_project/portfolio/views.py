@@ -44,3 +44,42 @@ class PortfolioViewSet(ModelViewSet):
         # Automatically set the owner to the logged-in user
         serializer.save(owner=self.request.user)
 
+class AssetViewSet(ModelViewSet):
+    # Implementation for Asset CRUD operations
+    serializer_class = AssetSerializer
+    queryset = Asset.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Limit assets to those in portfolios owned by the authenticated user
+        return self.queryset.filter(portfolio__owner=self.request.user)
+    
+    # Automatically set the portfolio based on the request data
+    def perform_create(self, serializer):
+        serializer.save()
+
+class TransactionViewSet(ModelViewSet):
+    # Implementation for Transaction CRUD operations
+    serializer_class = TransactionSerializer
+    queryset = Transaction.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Limit transactions to those for assets in portfolios owned by the authenticated user
+        return self.queryset.filter(asset__portfolio__owner=self.request.user)
+    
+    # Automatically set the asset based on the request data
+    def perform_create(self, serializer):
+        transaction = serializer.save()
+        asset = transaction.asset
+        # Update asset's average buy price and quantity if it's a BUY transaction
+        if transaction.transaction_type == "BUY":
+            # Calculate the new average buy price based on the existing quantity and price plus the new purchase
+            total_cost = (asset.average_buy_price * asset.quantity) + (transaction.price_per_unit * transaction.quantity)
+            total_quantity = asset.quantity + transaction.quantity
+            asset.average_buy_price = total_cost / total_quantity
+            asset.quantity = total_quantity
+        elif transaction.transaction_type == "SELL":
+            # Sell transaction reduces the quantity
+            asset.quantity -= transaction.quantity
+        asset.save()
