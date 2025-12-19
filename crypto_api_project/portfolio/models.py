@@ -37,7 +37,7 @@ class Asset(models.Model):
         Portfolio, on_delete=models.CASCADE, related_name="assets"
     )
     symbol = models.CharField(max_length=10)
-    quantity = models.DecimalField(max_digits=20, decimal_places=8)
+    quantity = models.DecimalField(max_digits=20, decimal_places=8, default=0.00)
     average_buy_price = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
     purchase_date = models.DateTimeField()
 
