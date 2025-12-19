@@ -1,0 +1,30 @@
+# virtual Environment
+ capstone_venv/
+ env/
+ .env
+ .venv
+
+# Python cache files
+ __pycache__/
+    *.py[cod]   
+    *.pyo
+    *.pyd
+    .Python
+    .so
+
+
+# Django migrations
+ */migrations/
+
+# SQLite database
+ db.sqlite3
+ db.sqlite3-journal
+ *.sql
+ *.dump
+
+# IDE specific files
+ .vscode/
+
+# os specific files
+  .DS_Store
+ Thumbs.db

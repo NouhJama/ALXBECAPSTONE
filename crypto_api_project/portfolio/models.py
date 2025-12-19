@@ -8,16 +8,21 @@ from django.contrib.auth.models import AbstractUser
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True, blank=False, null=False)
 
-    #profile fields 
-    phone_number = models.CharField(max_length=15, blank=True, null=True)   
-    bio = models.TextField(blank=True, null=True)
-    profile_picture = models.ImageField(upload_to="profile_pics/", blank=True, null=True)
-    preferred_currency = models.CharField(max_length=10, default="USD")
-    date_joined = models.DateTimeField(auto_now_add=True)
-
-
     def __str__(self):
         return self.username
+    
+# Profile Model
+class UserProfile(models.Model):   
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile"
+    )
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    bio = models.TextField(blank=True, null=True, max_length=500)
+    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)   
+    preferred_currency = models.CharField(max_length=10, default="USD")
+
+    def __str__(self):
+        return f"Profile of {self.user.username}"
 
 
 #Portofolio, Asset and Transaction models

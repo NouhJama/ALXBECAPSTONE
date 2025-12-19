@@ -2,18 +2,30 @@ from django.shortcuts import render
 from rest_framework.generics import CreateAPIView
 from rest_framework.viewsets import ModelViewSet
 from django.contrib.auth import get_user_model
-from .serializers import UserProfileSerializer, PortfolioSerializer, AssetSerializer, TransactionSerializer 
+from .serializers import (
+    UserCreateSerializer, PortfolioSerializer, 
+    AssetSerializer, TransactionSerializer, UserProfileSerializer 
+)
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken
-from .models import Portfolio, Asset, Transaction
+from .models import Portfolio, Asset, Transaction, UserProfile
 
 # Create your views here.
 class UserCreateView(CreateAPIView):
     queryset = get_user_model().objects.all()
-    serializer_class = UserProfileSerializer
+    serializer_class = UserCreateSerializer
     permission_classes = [AllowAny]
+
+class UserProfileViewSet(ModelViewSet):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Limit profiles to the authenticated user
+        return self.queryset.filter(user=self.request.user)
 
 class LoginView(ObtainAuthToken):
     def post(self, request, *args, **kwargs):

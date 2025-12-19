@@ -1,11 +1,11 @@
 from  rest_framework import serializers
-from .models import  Portfolio, Asset, Transaction
+from .models import  Portfolio, Asset, Transaction, UserProfile
 # Import get_user_model to reference the custom user model
 from django.contrib.auth import get_user_model
 
 
 # User Serializer
-class UserProfileSerializer(serializers.ModelSerializer):
+class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     email = serializers.EmailField(required=True)
 
@@ -15,11 +15,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'id', 
             'username',
             'email',
-            'phone_number',
-            'bio',
-            'profile_picture',
-            'preferred_currency',
-            'date_joined',
             'password',
         ]
 
@@ -39,6 +34,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
     
         user.save()
         return user
+
+# UserProfile Serializer
+class UserProfileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserProfile
+        fields = ['id', 'phone_number', 'bio', 'profile_picture', 'preferred_currency']
+
     
 # Portfolio Serializer
 class PortfolioSerializer(serializers.ModelSerializer):
