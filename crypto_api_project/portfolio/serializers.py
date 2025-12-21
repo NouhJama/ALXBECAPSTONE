@@ -54,7 +54,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
 class AssetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Asset
-        fields = ['id', 'portfolio', 'symbol', 'quantity', 'purchase_price', 'purchase_date']
+        fields = ['id', 'symbol', 'quantity', 'average_buy_price', 'purchase_date']
         read_only_fields = ['portfolio']
 
 # Transaction Serializer
