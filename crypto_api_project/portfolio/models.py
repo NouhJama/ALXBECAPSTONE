@@ -56,7 +56,7 @@ class Transaction(models.Model):
     transaction_type = models.CharField(max_length=10, choices=[("BUY", "Buy"), ("SELL", "Sell")])
     quantity = models.DecimalField(max_digits=20, decimal_places=8)
     price_per_unit = models.DecimalField(max_digits=20, decimal_places=8)
-    transaction_date = models.DateTimeField()
+    transaction_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.transaction_type} {self.quantity} of {self.asset.symbol} at {self.price_per_unit} on {self.transaction_date}"

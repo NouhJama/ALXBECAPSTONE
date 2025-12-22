@@ -11,13 +11,17 @@ router.register(r'transactions', TransactionViewSet, basename='transaction')
 router.register(r'userprofiles', UserProfileViewSet, basename='userprofile') 
 
 # Nested router for assets under portfolios
-portfolio_router = NestedDefaultRouter(router, r'portfolios', lookup='portfolio')   
-portfolio_router.register(r'assets', AssetViewSet, basename='portfolio-assets') 
+asset_router = NestedDefaultRouter(router, r'portfolios', lookup='portfolio')   
+asset_router.register(r'assets', AssetViewSet, basename='portfolio-assets') 
 
+# Nested router for the transactions under assets (if needed)
+transaction_router = NestedDefaultRouter(asset_router, r'assets', lookup='asset')
+transaction_router.register(r'transactions', TransactionViewSet, basename='asset-transactions') 
 urlpatterns = [
     path("register/", UserCreateView.as_view(), name="user-register"),
     path("login/", LoginView.as_view(), name="user-login"),
     ]
 
 urlpatterns += router.urls
-urlpatterns += portfolio_router.urls
+urlpatterns += asset_router.urls
+urlpatterns += transaction_router.urls  

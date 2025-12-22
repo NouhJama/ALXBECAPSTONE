@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.generics import CreateAPIView
-from rest_framework.viewsets import ModelViewSet
+from rest_framework import mixins, viewsets
 from django.contrib.auth import get_user_model
 from .serializers import (
     UserCreateSerializer, PortfolioSerializer, 
@@ -20,7 +20,7 @@ class UserCreateView(CreateAPIView):
     serializer_class = UserCreateSerializer
     permission_classes = [AllowAny]
 
-class UserProfileViewSet(ModelViewSet):
+class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
     permission_classes = [IsAuthenticated]
@@ -44,7 +44,7 @@ class LoginView(ObtainAuthToken):
         })
 
 # Portofolio, Asset, and Transaction views would go here
-class PortfolioViewSet(ModelViewSet):
+class PortfolioViewSet(viewsets.ModelViewSet):
     # Implementation for Portfolio CRUD operations
     serializer_class = PortfolioSerializer
     queryset = Portfolio.objects.all()
@@ -58,7 +58,7 @@ class PortfolioViewSet(ModelViewSet):
         # Automatically set the owner to the logged-in user
         serializer.save(owner=self.request.user)
 
-class AssetViewSet(ModelViewSet):
+class AssetViewSet(viewsets.ModelViewSet):
     # Implementation for Asset CRUD operations
     serializer_class = AssetSerializer
     queryset = Asset.objects.all()
@@ -89,8 +89,21 @@ class AssetViewSet(ModelViewSet):
         self.perform_destroy(instance) # Delete the asset
         return Response({f"'detail': 'Asset {symbol} deleted successfully.'"},
                         status = status.HTTP_200_OK)
-
-class TransactionViewSet(ModelViewSet):
+    
+"""
+- Transaction ViewSet with create, list, and retrieve functionalities.
+- Delete functionality is immutable to preserve transaction history.
+- Ensures transactions are linked to assets in portfolios owned by the authenticated user.
+- Updates asset's average buy price and quantity on BUY transactions.
+- Prevents selling more than owned on SELL transactions.
+- Custom error handling for insufficient balance.
+"""    
+class TransactionViewSet(
+    viewsets.GenericViewSet, 
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+):
     # Implementation for Transaction CRUD operations
     serializer_class = TransactionSerializer
     queryset = Transaction.objects.all()
@@ -98,20 +111,32 @@ class TransactionViewSet(ModelViewSet):
 
     def get_queryset(self):
         # Limit transactions to those for assets in portfolios owned by the authenticated user
-        return self.queryset.filter(asset__portfolio__owner=self.request.user)
+        asset_id = self.kwargs.get('asset_pk') # For nested routing
+        if asset_id:
+            return self.queryset.filter(asset__id=asset_id, asset__portfolio__owner=self.request.user)
     
     # Automatically set the asset based on the request data
     def perform_create(self, serializer):
-        transaction = serializer.save()
-        asset = transaction.asset
+        asset_id = self.kwargs.get('asset_pk')
+        asset = Asset.objects.filter(id=asset_id, portfolio__owner=self.request.user).first()
         # Update asset's average buy price and quantity if it's a BUY transaction
-        if transaction.transaction_type == "BUY":
+        #Get the values from the validated data
+        transaction_type = serializer.validated_data.get('transaction_type')
+        quantity = serializer.validated_data.get('quantity')
+        price_per_unit = serializer.validated_data.get('price_per_unit')
+        if transaction_type == "BUY":
             # Calculate the new average buy price based on the existing quantity and price plus the new purchase
-            total_cost = (asset.average_buy_price * asset.quantity) + (transaction.price_per_unit * transaction.quantity)
-            total_quantity = asset.quantity + transaction.quantity
-            asset.average_buy_price = total_cost / total_quantity
+            total_cost = (asset.average_buy_price * asset.quantity) + (price_per_unit * quantity)
+            total_quantity = asset.quantity + quantity
+            # Avoid division by zero errorl
+            if total_quantity > 0:
+                asset.average_buy_price = total_cost / total_quantity
             asset.quantity = total_quantity
-        elif transaction.transaction_type == "SELL":
+        elif transaction_type == "SELL":
+            # check if user is trying to sell more than they own
+            if quantity > asset.quantity:
+                raise PermissionDenied("Insufficient balance.")
             # Sell transaction reduces the quantity
-            asset.quantity -= transaction.quantity
+            asset.quantity -= quantity
+        serializer.save(asset=asset)
         asset.save()
