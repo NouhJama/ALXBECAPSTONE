@@ -13,6 +13,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from .models import Portfolio, Asset, Transaction, UserProfile
 from rest_framework.exceptions import PermissionDenied
 from rest_framework import status
+from portfolio.services.coingecko import get_coin_price
 
 # Create your views here.
 class UserCreateView(CreateAPIView):
@@ -119,24 +120,35 @@ class TransactionViewSet(
     def perform_create(self, serializer):
         asset_id = self.kwargs.get('asset_pk')
         asset = Asset.objects.filter(id=asset_id, portfolio__owner=self.request.user).first()
+
         # Update asset's average buy price and quantity if it's a BUY transaction
         #Get the values from the validated data
         transaction_type = serializer.validated_data.get('transaction_type')
         quantity = serializer.validated_data.get('quantity')
-        price_per_unit = serializer.validated_data.get('price_per_unit')
+        # Fetch live price for the asset
+        price_per_unit = get_coin_price(asset.coin_id, currency="usd")
+        if not price_per_unit or (isinstance(price_per_unit, dict) and not price_per_unit.get("Success", True)):
+            raise serializer.ValidationError("Could not fetch live price for the asset.")
+        
         if transaction_type == "BUY":
             # Calculate the new average buy price based on the existing quantity and price plus the new purchase
             total_cost = (asset.average_buy_price * asset.quantity) + (price_per_unit * quantity)
             total_quantity = asset.quantity + quantity
+
             # Avoid division by zero errorl
             if total_quantity > 0:
                 asset.average_buy_price = total_cost / total_quantity
             asset.quantity = total_quantity
         elif transaction_type == "SELL":
+
             # check if user is trying to sell more than they own
             if quantity > asset.quantity:
-                raise PermissionDenied("Insufficient balance.")
+                raise serializer.ValidationError("Insufficient balance.")
+            
             # Sell transaction reduces the quantity
             asset.quantity -= quantity
-        serializer.save(asset=asset)
+        serializer.save(
+            asset=asset,
+            price_per_unit=price_per_unit
+            )
         asset.save()

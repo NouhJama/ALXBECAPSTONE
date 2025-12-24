@@ -62,4 +62,4 @@ class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
         fields = ['id', 'asset', 'transaction_type', 'quantity', 'price_per_unit', 'transaction_date']
-        read_only_fields = ['id', 'asset']
+        read_only_fields = ['id', 'asset', 'price_per_unit', 'transaction_date']

@@ -22,12 +22,12 @@ class PortfolioAdmin(admin.ModelAdmin):
 
 @admin.register(Asset)
 class AssetAdmin(admin.ModelAdmin):
-    list_display = ('symbol', 'portfolio', 'quantity', 'average_buy_price', 'purchase_date')
-    search_fields = ('symbol', 'portfolio__name')
+    list_display = ('coin_id', 'portfolio', 'quantity', 'average_buy_price', 'purchase_date')
+    search_fields = ('coin_id', 'portfolio__name')
     ordering = ('-purchase_date',)
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ('transaction_type', 'asset', 'quantity', 'price_per_unit', 'transaction_date')
-    search_fields = ('transaction_type', 'asset__symbol')
+    search_fields = ('transaction_type', 'asset__coin_id')
     ordering = ('-transaction_date',)   
