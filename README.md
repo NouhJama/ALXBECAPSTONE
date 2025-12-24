@@ -12,13 +12,18 @@
 - **Python** (Backend language)
 - **Django** (Web framework)
 
+
 ## FEATURES
 - User Registration and Authentication
 - Portfolio Management
 - Asset Tracking
 - Transaction History
 - Real-time Cryptocurrency Data Integration
-- Responsive Design
+- Admin Interface for Managing Users and Portfolios
+- Token-based Authentication
+- Secure API Endpoints with Permissions
+- Data Validation and Error Handling
+- External API Integration with CoinGecko for live cryptocurrency prices
 
 ## SETUP AND INSTALLATION
 1. Clone the repository:
@@ -59,8 +64,8 @@
 - User Registration: `/api/register/`
 - User Login: `/api/login/`
 - Portfolio Management: `/api/portfolios/`
-- Asset Tracking: `/api/assets/`
-- Transaction History: `/api/transactions/`
+- Asset Tracking: `/api/portfolios/<portfolio_pk>/assets/`
+- Transaction History: `/api/portfolios/<portfolio_pk>/assets/<asset_pk>/transactions/`
 - Real-time Cryptocurrency Data: `/api/crypto-data/`
 
 
