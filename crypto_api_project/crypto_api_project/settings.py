@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 from decouple import config
 
@@ -147,3 +148,13 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Cache settings (optional, for performance optimization)
+#Get the cache location from environment variable or use default
+CACHE_LOCATION = os.getenv("CACHE_LOCATION", "127.0.0.1:11211")
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
+        "LOCATION": CACHE_LOCATION,
+    }
+}

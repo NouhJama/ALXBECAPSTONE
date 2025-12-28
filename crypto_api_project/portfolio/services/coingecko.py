@@ -1,16 +1,28 @@
 import requests
 from django.conf import settings
+from django.core.cache import cache
+
 
 COIN_GECKO_URL = "https://api.coingecko.com/api/v3"
 
 def get_coin_price(coin_id: str, currency: str = "usd"):
     """
-    Fetch the current price of a cryptocurrency from CoinGecko.
-
-    :param coin_id: The CoinGecko ID of the cryptocurrency (e.g., 'bitcoin').
-    :param currency: The fiat currency to get the price in (default is 'usd').
-    :return: The current price or None if not found.
+    - First look the price in cache. If found, return it.
+    - If not found in cache, fetch from CoinGecko API.
+    - Cache the fetched price for future requests.
+    Args:
+        coin_id (str): The CoinGecko coin ID (e.g., 'bitcoin').
+        currency (str): The target currency (e.g., 'usd').
     """
+    cache_key = f"coin_price_{coin_id}_{currency}"
+    # Try to get  price from cache
+    cached_price = cache.get(cache_key)
+    if cached_price is not None:
+        print("Price fetched from cache.")
+        return {"success": True, "price": cached_price, "message": None}
+    # If not in cache, fetch from CoinGecko API
+    print("Fetching price from CoinGecko API.")
+
     endpoint = f"{COIN_GECKO_URL}/simple/price"
     headers = {
         "api_key": settings.COIN_GECKO_API_KEY
@@ -23,17 +35,27 @@ def get_coin_price(coin_id: str, currency: str = "usd"):
         response = requests.get(endpoint, headers=headers, params=params, timeout=10)
         response.raise_for_status()
         data = response.json()
-        return data.get(coin_id, {}).get(currency)
-    except requests.RequestException as e:
-        print(f"Error fetching price from CoinGecko: {e}")
-        return None
-    # Catch coin_id not found
-    except KeyError:
-        err_message = f"Coin ID {coin_id} not found in CoinGecko response."
-        print(err_message)
-        return {"Success": False, "price": None, "message": err_message}
+
+        # Cache the price for 5 minutes (300 seconds)
+        price = data[coin_id.lower()][currency.lower()]
+        cache.set(cache_key, price, timeout=300)
+
+        return {
+            "success": True, "price": price, "message": None
+        }
+    
     # Timeout exception
     except requests.Timeout:
         err_message = 'Request to CoinGecko timed out.'
-        print(err_message)
-        return {"Success": False, "message": err_message}
+        return {"success": False, "message": err_message}
+    
+    # Catch network-related errors
+    except requests.RequestException as e:
+        message = 'Network error occurred while fetching data from CoinGecko.'
+        return {"success": False, "price": None, "message": str(e)}
+     
+    # Catch coin_id not found
+    except KeyError:
+        err_message = f"Coin ID {coin_id} not found in CoinGecko response."
+        return {"success": False, "price": None, "message": err_message}
+   

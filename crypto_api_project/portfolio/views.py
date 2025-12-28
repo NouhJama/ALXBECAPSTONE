@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.shortcuts import render
 from rest_framework.generics import CreateAPIView
 from rest_framework import mixins, viewsets
@@ -11,9 +12,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken
 from .models import Portfolio, Asset, Transaction, UserProfile
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework import status
 from portfolio.services.coingecko import get_coin_price
+from django.db import transaction
 
 # Create your views here.
 class UserCreateView(CreateAPIView):
@@ -86,7 +88,7 @@ class AssetViewSet(viewsets.ModelViewSet):
     # Delete an asset and return custome message
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object() # Get the asset instance to be deleted
-        symbol = instance.symbol
+        symbol = instance.coin_id.upper() # Get the coin symbol for message
         self.perform_destroy(instance) # Delete the asset
         return Response({f"'detail': 'Asset {symbol} deleted successfully.'"},
                         status = status.HTTP_200_OK)
@@ -117,6 +119,7 @@ class TransactionViewSet(
             return self.queryset.filter(asset__id=asset_id, asset__portfolio__owner=self.request.user)
     
     # Automatically set the asset based on the request data
+    @transaction.atomic
     def perform_create(self, serializer):
         asset_id = self.kwargs.get('asset_pk')
         asset = Asset.objects.filter(id=asset_id, portfolio__owner=self.request.user).first()
@@ -126,9 +129,14 @@ class TransactionViewSet(
         transaction_type = serializer.validated_data.get('transaction_type')
         quantity = serializer.validated_data.get('quantity')
         # Fetch live price for the asset
-        price_per_unit = get_coin_price(asset.coin_id, currency="usd")
-        if not price_per_unit or (isinstance(price_per_unit, dict) and not price_per_unit.get("Success", True)):
-            raise serializer.ValidationError("Could not fetch live price for the asset.")
+        price_response = get_coin_price(asset.coin_id, currency="usd")  
+        # check if price fetch was successful
+        if not price_response or not price_response.get("success", True):
+            raise ValidationError("Could not fetch live price for the asset.")   
+        price_per_unit = Decimal(str(price_response.get("price", 0.00)))
+        
+        # calculate total value
+        total_value = price_per_unit * quantity
         
         if transaction_type == "BUY":
             # Calculate the new average buy price based on the existing quantity and price plus the new purchase
@@ -143,12 +151,18 @@ class TransactionViewSet(
 
             # check if user is trying to sell more than they own
             if quantity > asset.quantity:
-                raise serializer.ValidationError("Insufficient balance.")
+                raise ValidationError("Insufficient balance.")
+            
+            # Calculate realized profit/loss for the sold quantity
+            profit_loss = (price_per_unit - asset.average_buy_price) * quantity
+            asset.realized_profit_loss += profit_loss
             
             # Sell transaction reduces the quantity
             asset.quantity -= quantity
         serializer.save(
             asset=asset,
-            price_per_unit=price_per_unit
+            price_per_unit=price_per_unit,
+            total_value=total_value
+
             )
         asset.save()

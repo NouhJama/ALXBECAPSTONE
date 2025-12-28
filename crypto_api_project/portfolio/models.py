@@ -43,10 +43,12 @@ class Asset(models.Model):
     portfolio = models.ForeignKey(
         Portfolio, on_delete=models.CASCADE, related_name="assets"
     )
-    coin_id = models.CharField(max_length=10)
+    coin_id = models.CharField(max_length=100)  # CoinGecko coin ID
     quantity = models.DecimalField(max_digits=20, decimal_places=8, default=0.00)
     average_buy_price = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
-    purchase_date = models.DateTimeField(auto_now_add=True)
+    realized_profit_loss = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
+    created_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
 
 
     def __str__(self):
@@ -59,6 +61,7 @@ class Transaction(models.Model):
     transaction_type = models.CharField(max_length=10, choices=[("BUY", "Buy"), ("SELL", "Sell")])
     quantity = models.DecimalField(max_digits=20, decimal_places=8)
     price_per_unit = models.DecimalField(max_digits=20, decimal_places=8)
+    total_value = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)
     transaction_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

@@ -7,10 +7,14 @@
 ## PROJECT TOOLS AND TECH STACK
 - **DRF** (Django REST Framework)
 - **MySQL** (Database)
-- **HTML** (Frontend markup)
-- **CSS** (Styling)
 - **Python** (Backend language)
 - **Django** (Web framework)
+- **CoinGecko API** (For real-time cryptocurrency data)
+- **DRF Token Authentication** (For secure API access)
+- **DRF Nested Routers** (For nested resource routing)
+- **Python Decouple** (For environment variable management)
+- **Pillow** (For image handling, if needed)
+- **Render or Heroku** (For deployment)
 
 
 ## FEATURES
@@ -24,6 +28,13 @@
 - Secure API Endpoints with Permissions
 - Data Validation and Error Handling
 - External API Integration with CoinGecko for live cryptocurrency prices
+- Price snapshots per transaction to maintain historical accuracy
+- Caching of cryptocurrency data to reduce API calls and improve performance
+- Pagination for large datasets
+- Portfolio performance analytics (e.g., total value, profit/loss calculations)
+- Comprehensive API documentation using tools like Swagger or DRF's built-in documentation features.
+- Unit and integration tests to ensure code quality and reliability.
+- RENDER deployment for easy access and scalability.
 
 ## SETUP AND INSTALLATION
 1. Clone the repository:
@@ -67,6 +78,9 @@
 - Asset Tracking: `/api/portfolios/<portfolio_pk>/assets/`
 - Transaction History: `/api/portfolios/<portfolio_pk>/assets/<asset_pk>/transactions/`
 - Real-time Cryptocurrency Data: `/api/crypto-data/`
+
+## NB
+- Transaction deletion is not allowed to maintain data integrity and accurate portfolio tracking.
 
 
 
