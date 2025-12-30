@@ -18,20 +18,21 @@
 
 
 ## FEATURES
-- User Registration and Authentication
-- Portfolio Management
-- Asset Tracking
-- Transaction History
-- Real-time Cryptocurrency Data Integration
-- Admin Interface for Managing Users and Portfolios
-- Token-based Authentication
-- Secure API Endpoints with Permissions
-- Data Validation and Error Handling
-- External API Integration with CoinGecko for live cryptocurrency prices
+- User Registration and Authentication.✅
+- Portfolio Management✅
+- Asset Tracking.✅
+- Transaction History.✅
+- Real-time Cryptocurrency Data Integration.✅
+- Admin Interface for Managing Users and Portfolios.✅
+- CRUD Operations for Portfolios, Assets, and Transactions.✅
+- Token-based Authentication.✅
+- Secure API Endpoints with Permissions.✅
+- Data Validation and Error Handling.✅
+- External API Integration with CoinGecko for live.cryptocurrency prices.✅
 - Price snapshots per transaction to maintain historical accuracy
-- Caching of cryptocurrency data to reduce API calls and improve performance
-- Pagination for large datasets
-- Portfolio performance analytics (e.g., total value, profit/loss calculations)
+- Caching of cryptocurrency data to reduce API calls and improve performance.✅
+- Pagination for large datasets.
+- Portfolio performance analytics (e.g., total value, profit/loss calculations).✅
 - Comprehensive API documentation using tools like Swagger or DRF's built-in documentation features.
 - Unit and integration tests to ensure code quality and reliability.
 - RENDER deployment for easy access and scalability.
@@ -76,8 +77,8 @@
 - User Login: `/api/login/`
 - Portfolio Management: `/api/portfolios/`
 - Asset Tracking: `/api/portfolios/<portfolio_pk>/assets/`
-- Transaction History: `/api/portfolios/<portfolio_pk>/assets/<asset_pk>/transactions/`
-- Real-time Cryptocurrency Data: `/api/crypto-data/`
+- Transaction History per Asset: `/api/portfolios/<portfolio_pk>/assets/<asset_pk>/transactions/`
+- All Transactions per Portfolio: `/api/portfolios/<portfolio_pk>/transactions/`
 
 ## NB
 - Transaction deletion is not allowed to maintain data integrity and accurate portfolio tracking.

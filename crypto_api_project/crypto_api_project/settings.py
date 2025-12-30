@@ -158,3 +158,7 @@ CACHES = {
         "LOCATION": CACHE_LOCATION,
     }
 }
+
+# Pagination settings
+REST_FRAMEWORK['DEFAULT_PAGINATION_CLASS'] = 'portfolio.pagination.TransactionCursorPagination'
+REST_FRAMEWORK['PAGE_SIZE'] = 100

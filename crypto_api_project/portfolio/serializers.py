@@ -43,6 +43,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['id', 'phone_number', 'bio', 'profile_picture', 'preferred_currency']
+        ordering = ['id']
 
     
 # Portfolio Serializer
@@ -51,6 +52,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
         model = Portfolio
         fields = ['id', 'owner', 'name', 'created_at']
         read_only_fields = ['owner', 'created_at']
+        ordering = ['-created_at', 'id']
 
 # Asset Serializer
 class AssetSerializer(serializers.ModelSerializer):
@@ -62,6 +64,7 @@ class AssetSerializer(serializers.ModelSerializer):
         fields = ['id', 'portfolio', 'coin_id', 'quantity', 'average_buy_price', 'realized_profit_loss', 
                   'unrealized_profit_loss', 'current_value', 'created_at', 'update_at'] 
         read_only_fields = ['portfolio', ]
+        ordering = ['-update_at', 'id']
 
     # Calculate unrealized profit/loss and current value
     def get_current_value(self, obj):
@@ -88,3 +91,4 @@ class TransactionSerializer(serializers.ModelSerializer):
         model = Transaction
         fields = ['id', 'asset', 'transaction_type', 'quantity', 'price_per_unit', 'total_value', 'transaction_date']
         read_only_fields = ['id', 'asset', 'price_per_unit', 'total_value', 'transaction_date']
+        ordering = ['-transaction_date', 'id']
