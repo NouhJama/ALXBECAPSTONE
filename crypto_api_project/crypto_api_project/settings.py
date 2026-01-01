@@ -25,12 +25,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-#vc&n8^-(ki=!=cf_rnof7tt4%+afv@ge_j01vt+nto%=eqo59"
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',')
 
 # Custom User Model
 AUTH_USER_MODEL = "portfolio.CustomUser"
@@ -96,11 +96,11 @@ WSGI_APPLICATION = "crypto_api_project.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "crypto_portfolio_db",
-        "USER": "root",
-        "PASSWORD": "Ilov3maimom@098",
-        "HOST": "localhost",
-        "PORT": "3306",
+        "NAME": config("DATABASE_NAME", default="crypto_db"),
+        "USER": config("DATABASE_USER", default="root"),
+        "PASSWORD": config("DATABASE_PASSWORD", default=""),
+        "HOST": config("DATABASE_HOST", default="localhost"),
+        "PORT": config("DATABASE_PORT", default="3306"),
         "OPTIONS": {
             "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
             "charset": "utf8mb4", # Support for full Unicode, including emojis
@@ -151,14 +151,27 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Cache settings (optional, for performance optimization)
 #Get the cache location from environment variable or use default
-CACHE_LOCATION = os.getenv("CACHE_LOCATION", "127.0.0.1:11211")
+CACHE_LOCATION = config('CACHE_LOCATION', default='127.0.0.1:11211')
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
-        "LOCATION": CACHE_LOCATION,
+        "LOCATION": config('CACHE_LOCATION', default='127.0.0.1:11211'),
     }
 }
 
 # Pagination settings
 REST_FRAMEWORK['DEFAULT_PAGINATION_CLASS'] = 'portfolio.pagination.TransactionCursorPagination'
 REST_FRAMEWORK['PAGE_SIZE'] = 100
+
+# Security settings
+CSRF_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+if not DEBUG:
+    SECURE_CONTENT_TYPE_NOSNIFF = True  
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_SSL_REDIRECT = False
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

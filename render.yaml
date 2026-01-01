@@ -1,0 +1,39 @@
+services:
+  # Web service configuration(Django API application)
+  - type: web
+    name: crypto-portfolio-api
+    env: python
+    region: oregon
+    plan: free
+    branch: main
+
+    # Commands to set up and start the Django application
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+      python manage.py migrate
+      python manage.py collectstatic --noinput
+    startCommand: gunicorn crypto_api_project.wsgi:application --bind 0.0.0.0:8000
+
+    # Environment variables for sensitive settings
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12"
+      - key: SECRET_KEY
+        sync: False
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: DATABASE_NAME
+        sync: False
+      - key: DATABASE_USER
+        sync: False
+      - key: DATABASE_PASSWORD
+        sync: False
+      - key: DATABASE_HOST
+        sync: False
+      - key: DATABASE_PORT
+        value: "3306"
+      - key: CACHE_LOCATION
+        value: "

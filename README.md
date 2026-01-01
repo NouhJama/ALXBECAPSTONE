@@ -1,8 +1,19 @@
 # ALXBECAPSTONE
 
+
+## PROJECT TITLE
+- Crypto Portfolio Management API
+
+## 📽️AUTHOR
+- Nouh Ali
+-GitHub: https://github.com/NouhJama/ALXBECAPSTONE
+
 ## PROJECT DESCRIPTION
+-# Crypto Portfolio Management API
 - This is for the capstone project of my AlxBE COURSE.
 - The project is DRF API for crypto portfolio management.
+- It allows users to register, create and manage their cryptocurrency portfolios, track assets, and record transactions.
+- The API integrates with the CoinGecko API to fetch real-time cryptocurrency data.
 
 ## PROJECT TOOLS AND TECH STACK
 - **DRF** (Django REST Framework)
@@ -80,6 +91,34 @@
 
 ## NB
 - Transaction deletion is not allowed to maintain data integrity and accurate portfolio tracking.
+
+## TESTING
+- To run the tests, use the following command:
+   ```bash
+   python manage.py test
+   ```
+
+## CONTRIBUTING
+- Contributions are welcome! Please fork the repository and create a pull request with your changes.
+
+## FUTURE ENHANCEMENTS
+- Implement advanced analytics and reporting features.
+- Enhance security measures, such as two-factor authentication.
+- Improve the user interface for better usability.
+- Upgrade to use JWT authentication for better security.
+- Portfolio level analytics and reporting.
+- Frontend integration using React or Vue.js.
+- Mobile app integration for on-the-go portfolio management.
+- Python Unittest and integration tests to ensure code quality and reliability.
+- Redis caching for improved performance.
+- Dockerize the application for easier deployment and scalability.
+- CI/CD pipeline setup for automated testing and deployment.
+- API rate limiting to prevent abuse.
+- Detailed API documentation using Swagger or ReDoc.
+- AWS or GCP deployment for better scalability and reliability.
+
+
+
 
 
 
