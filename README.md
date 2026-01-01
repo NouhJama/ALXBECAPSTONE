@@ -76,7 +76,15 @@
    ```bash
    python manage.py createsuperuser
    ```
-7. Run the development server:
+
+7. Configure environment variables:
+   - Create a `.env` file in the project root and add the necessary environment variables (e.g., SECRET_KEY, DATABASE settings). 
+
+9. Obtain a CoinGecko API key (if required) and add it to your environment variables.
+
+10. (Optional) Configure caching settings in `settings.py` if using caching.
+
+8. Run the development server:
    ```bash
    python manage.py runserver
    ```
