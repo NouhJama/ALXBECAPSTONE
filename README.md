@@ -31,11 +31,9 @@
 - External API Integration with CoinGecko for live.cryptocurrency prices.✅
 - Price snapshots per transaction to maintain historical accuracy
 - Caching of cryptocurrency data to reduce API calls and improve performance.✅
-- Pagination for large datasets.
+- Pagination for large datasets.✅
 - Portfolio performance analytics (e.g., total value, profit/loss calculations).✅
-- Comprehensive API documentation using tools like Swagger or DRF's built-in documentation features.
-- Unit and integration tests to ensure code quality and reliability.
-- RENDER deployment for easy access and scalability.
+- Unit and integration tests to ensure code quality and reliability.✅
 
 ## SETUP AND INSTALLATION
 1. Clone the repository:
