@@ -105,7 +105,7 @@ if DATABASE_URL:
     # Production: Use PostgreSQL view DATABASE_URL from environment variable
     DATABASES = {
         "default": dj_database_url.parse(
-            default=DATABASE_URL,
+            DATABASE_URL,
             conn_max_age=600,
             conn_health_checks=True,
         )
