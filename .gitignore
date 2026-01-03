@@ -1,31 +1,35 @@
 # virtual Environment
- capstone_venv/
- env/
- .env
- .venv
- *.venv/
+capstone_venv/
+env/
+.env
+.venv
+*.venv
+crypto_api_project/.env
 
 # Python cache files
- __pycache__/
-    *.py[cod]   
-    *.pyo
-    *.pyd
-    .Python
-    .so
+__pycache__/
+*.py[cod]   
+*.pyo
+*.pyd
+.Python
+*.so
+crypto_api_project/crypto_api_project/__pycache__/settings.cpython-313.pyc
 
 
 # Django migrations
- */migrations/
+*/migrations/__pycache__/
+*/migrations/*.pyc
+
 
 # SQLite database
- db.sqlite3
- db.sqlite3-journal
- *.sql
- *.dump
+db.sqlite3
+db.sqlite3-journal
+*.sql
+*.dump
 
 # IDE specific files
- .vscode/
+.vscode/
 
 # os specific files
-  .DS_Store
- Thumbs.db
+.DS_Store
+Thumbs.db
