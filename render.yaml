@@ -6,8 +6,7 @@ services:
     region: oregon
     plan: free
     branch: main
-    rootDir: crypto_api_project
-   
+`   
     # Commands to set up and start the Django application
     buildCommand: |
       pip install --upgrade pip
