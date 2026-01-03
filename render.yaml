@@ -20,7 +20,7 @@ services:
     # Environment variables specific to this service
     envVars:
       - key: PYTHON_VERSION
-        value: "3.11"
+        value: "3.11.10"
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
