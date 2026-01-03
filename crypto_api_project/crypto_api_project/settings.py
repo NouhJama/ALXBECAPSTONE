@@ -104,7 +104,7 @@ DATABASE_URL= config('DATABASE_URL', default=None)
 if DATABASE_URL:
     # Production: Use PostgreSQL view DATABASE_URL from environment variable
     DATABASES = {
-        "default": dj_database_url.config(
+        "default": dj_database_url.parse(
             default=DATABASE_URL,
             conn_max_age=600,
             conn_health_checks=True,
@@ -192,7 +192,7 @@ else:
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'unique-snowflake',
+            'LOCATION': 'unique-snowflake'
         }
     }
     print("Using Local Memory Cache")
