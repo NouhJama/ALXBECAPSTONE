@@ -6,34 +6,57 @@ services:
     region: oregon
     plan: free
     branch: main
+    rootDirectory: crypto_api_project
 
     # Commands to set up and start the Django application
     buildCommand: |
       pip install --upgrade pip
       pip install -r requirements.txt
-      python manage.py migrate
       python manage.py collectstatic --noinput
-    startCommand: gunicorn crypto_api_project.wsgi:application --bind 0.0.0.0:8000
+      python manage.py migrate
+    startCommand: gunicorn crypto_api_project.wsgi:application
 
-    # Environment variables for sensitive settings
+    # Environment groups for managing environment variables
+    envGroups:
+      - crypto-portfolio-env-group
+
+    # Environment variables specific to this service
     envVars:
       - key: PYTHON_VERSION
-        value: "3.12"
-      - key: SECRET_KEY
-        sync: False
+        value: "3.11"
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
-        value: ".onrender.com"
-      - key: DATABASE_NAME
-        sync: False
-      - key: DATABASE_USER
-        sync: False
-      - key: DATABASE_PASSWORD
-        sync: False
-      - key: DATABASE_HOST
-        sync: False
-      - key: DATABASE_PORT
-        value: "3306"
-      - key: CACHE_LOCATION
-        value: "
+        value: "crypto-portfolio-api.onrender.com"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: crypto-portfolio-db
+          property: connectionString
+
+  # PostgreSQL database service configuration
+  - type: pserv
+    name: crypto-portfolio-db
+    env: docker
+    plan: free
+    region: oregon
+    dockerCommand: postgres
+
+    disks:
+      - name: postgres-data
+        mountPath: /var/lib/postgresql/data
+        sizeGB: 1
+
+    # Database configuration
+    envVars:
+      - key: POSTGRES_DB
+        value: crypto_portfolio_db  
+      - key: POSTGRES_USER
+        value: crypto_user
+      - key: POSTGRES_PASSWORD
+        generateValue=: true
+        length: 16
+
+
+
+
+    

@@ -26,6 +26,7 @@
 - **Python Decouple** (For environment variable management)
 - **Pillow** (For image handling, if needed)
 - **Render or Heroku** (For deployment)
+- **Render Redis** (For caching, optional)
 
 
 ## FEATURES
@@ -84,7 +85,7 @@
 
 10. (Optional) Configure caching settings in `settings.py` if using caching.
 
-8. Run the development server:
+11. Run the development server:
    ```bash
    python manage.py runserver
    ```

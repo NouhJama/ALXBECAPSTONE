@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 import os
 from pathlib import Path
 from decouple import config
+import dj_database_url
 
 # API Key for CoinGecko 
 COIN_GECKO_API_KEY = config('COINGECKO_API_KEY')
@@ -30,7 +31,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',')
+ALLOWED_HOSTS = [host.strip() for host in config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',') if host.strip()]
 
 # Custom User Model
 AUTH_USER_MODEL = "portfolio.CustomUser"
@@ -43,7 +44,10 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.TokenAuthentication",    
-    ]
+    ],
+
+    "DEFAULT_PAGINATION_CLASS": "portfolio.pagination.TransactionCursorPagination",
+    "PAGE_SIZE": 100,
 }
 
 
@@ -62,6 +66,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -79,6 +84,7 @@ TEMPLATES = [
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
+                "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
@@ -93,22 +99,39 @@ WSGI_APPLICATION = "crypto_api_project.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": config("DATABASE_NAME", default="crypto_db"),
-        "USER": config("DATABASE_USER", default="root"),
-        "PASSWORD": config("DATABASE_PASSWORD", default=""),
-        "HOST": config("DATABASE_HOST", default="localhost"),
-        "PORT": config("DATABASE_PORT", default="3306"),
-        "OPTIONS": {
-            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
-            "charset": "utf8mb4", # Support for full Unicode, including emojis
-            "use_unicode": True,
-            "collation": "utf8mb4_general_ci",
+DATABASE_URL= config('DATABASE_URL', default=None)
+
+if DATABASE_URL:
+    # Production: Use PostgreSQL view DATABASE_URL from environment variable
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
+    print("Using PostgreSQL Database")
+
+else:
+    # Development: Use MYSQL.
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": config("DATABASE_NAME", default="crypto_portfolio_db"),
+            "USER": config("DATABASE_USER", default="crypto_user"),
+            "PASSWORD": config("DATABASE_PASSWORD", default="crypto_password"),
+            "HOST": config("DATABASE_HOST", default="localhost"),
+            "PORT": config("DATABASE_PORT", default="3306"),
+            "OPTIONS": {
+                "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+                "charset": "utf8mb4",
+                "use_unicode": True,
+                "collation": "utf8mb4_general_ci",
+            }
         }
     }
-}
+    print("Using MySQL Database")
+
 
 
 # Password validation
@@ -145,33 +168,46 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Cache settings (optional, for performance optimization)
-#Get the cache location from environment variable or use default
-CACHE_LOCATION = config('CACHE_LOCATION', default='127.0.0.1:11211')
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
-        "LOCATION": config('CACHE_LOCATION', default='127.0.0.1:11211'),
+"""
+-Use Redis as the cache backend. Make sure to have a Redis server running and
+ configure the REDIS_URL environment variable accordingly.
+"""
+REDIS_URL = config('REDIS_URL', default=None)
+if REDIS_URL:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'LOCATION': REDIS_URL
+        }
     }
-}
+    print("Using Redis Cache")
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'unique-snowflake',
+        }
+    }
+    print("Using Local Memory Cache")
 
-# Pagination settings
-REST_FRAMEWORK['DEFAULT_PAGINATION_CLASS'] = 'portfolio.pagination.TransactionCursorPagination'
-REST_FRAMEWORK['PAGE_SIZE'] = 100
 
 # Security settings
 CSRF_COOKIE_SECURE = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True  
+
 if not DEBUG:
-    SECURE_CONTENT_TYPE_NOSNIFF = True  
+    SECURE_SSL_REDIRECT = True
     SECURE_HSTS_SECONDS = 31536000  # 1 year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
-    SECURE_SSL_REDIRECT = False
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
