@@ -11,7 +11,7 @@ services:
     # Commands to set up and start the Django application
     buildCommand: |
       pip install --upgrade pip
-      pip install -r ../requirements.txt
+      pip install -r requirements.txt
       python manage.py collectstatic --no-input
       python manage.py migrate --no-input
     startCommand: gunicorn crypto_api_project.wsgi:application
@@ -25,7 +25,7 @@ services:
         value: "False"
       - key: ALLOWED_HOSTS
         value: ".onrender.com"
-        
+
       - fromGroup: crypto-portfolio-env-group
 
   
