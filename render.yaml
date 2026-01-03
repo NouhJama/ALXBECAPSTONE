@@ -14,7 +14,7 @@ services:
       cd crypto_api_project
       python manage.py collectstatic --no-input
       python manage.py migrate --no-input
-    startCommand: gunicorn crypto_api_project.wsgi:application
+    startCommand: cd crypto_api_project && gunicorn crypto_api_project.wsgi:application
 
 
     # Environment variables specific to this service
