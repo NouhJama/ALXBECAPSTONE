@@ -6,11 +6,12 @@ services:
     region: oregon
     plan: free
     branch: main
-      
+
     # Commands to set up and start the Django application
     buildCommand: |
       pip install --upgrade pip
       pip install -r requirements.txt
+      cd crypto_api_project
       python manage.py collectstatic --no-input
       python manage.py migrate --no-input
     startCommand: gunicorn crypto_api_project.wsgi:application
