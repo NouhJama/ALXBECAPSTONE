@@ -25,7 +25,7 @@ def get_coin_price(coin_id: str, currency: str = "usd"):
 
     endpoint = f"{COIN_GECKO_URL}/simple/price"
     headers = {
-        "api_key": settings.COIN_GECKO_API_KEY
+        "x-cg-demo-api-key": settings.COIN_GECKO_API_KEY
     }
     params = {
         "ids": coin_id.lower(),

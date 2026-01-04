@@ -134,7 +134,7 @@ class TransactionViewSet(
     @transaction.atomic
     def perform_create(self, serializer):
         asset_id = self.kwargs.get('asset_pk')
-        asset = Asset.objects.filter(id=asset_id, portfolio__owner=self.request.user).first()
+        asset = Asset.objects.select_for_update().get(id=asset_id, portfolio__owner=self.request.user)
         # Avoid processing if asset not found or access denied
         if not asset:
             raise ValidationError("Asset not found or access denied.")
