@@ -17,7 +17,8 @@
 
 ## PROJECT TOOLS AND TECH STACK
 - **DRF** (Django REST Framework)
-- **MySQL** (Database)
+- **MySQL** (Local dev Database)
+- **PostgreSQL** (Production Database)
 - **Python** (Backend language)
 - **Django** (Web framework)
 - **CoinGecko API** (For real-time cryptocurrency data)
@@ -46,6 +47,7 @@
 - Pagination for large datasets.✅
 - Portfolio performance analytics (e.g., total value, profit/loss calculations).✅
 - Unit and integration tests to ensure code quality and reliability.✅
+- Render deployment for easy access and scalability.✅
 
 ## SETUP AND INSTALLATION
 1. Clone the repository:
@@ -124,7 +126,7 @@
 - CI/CD pipeline setup for automated testing and deployment.
 - API rate limiting to prevent abuse.
 - Detailed API documentation using Swagger or ReDoc.
-- AWS or GCP deployment for better scalability and reliability.
+
 
 
 
