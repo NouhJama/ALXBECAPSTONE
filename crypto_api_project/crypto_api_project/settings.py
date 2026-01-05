@@ -184,15 +184,29 @@ if REDIS_URL:
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-            'LOCATION': REDIS_URL
+            'LOCATION': REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "CONNECTION_POOL_KWARGS": {"max_connections": 25,
+                                           "retry_on_timeout": True
+                },
+                'SOCKET_CONNECT_TIMEOUT': 5,  # seconds
+                'SOCKET_TIMEOUT': 5,  # seconds
+                'COMPRESSOR': True,
+                'PARSER_CLASS': 'redis.connection.HiredisParser',
+            },
+            'KEY_PREFIX': 'crypto_portfolio',
+            'TIMEOUT': 300,
+            'VERSION': 1,
         }
     }
-    print("Using Redis Cache")
+    print("Using Redis Cache with 30 connections")
 else:
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'unique-snowflake'
+            'LOCATION': 'unique-snowflake',
+            'TIMEOUT': 300
         }
     }
     print("Using Local Memory Cache")

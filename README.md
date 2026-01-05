@@ -2,7 +2,7 @@
 
 
 ## PROJECT TITLE
-- Crypto Portfolio Management API
+- Crypto Portfolio Management API🌐
 
 ## 📽️AUTHOR
 - Nouh Ali
