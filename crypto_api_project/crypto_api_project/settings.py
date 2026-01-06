@@ -192,7 +192,7 @@ if REDIS_URL:
                 },
                 'SOCKET_CONNECT_TIMEOUT': 5,  # seconds
                 'SOCKET_TIMEOUT': 5,  # seconds
-                'COMPRESSOR': 'True',
+                'COMPRESSOR': True,
                 'PARSER_CLASS': 'redis.connection.HiredisParser',
                 'IGNORE_EXCEPTIONS': True, 
             },
