@@ -91,6 +91,19 @@
    ```bash
    python manage.py runserver
    ```
+### AUTHENTICAITON AND API Access
+ - The API endpoints are secured using token-based authentication.
+ - Users must register and obtain an authentication token to access the API.
+ - Include the token in the `Authorization` header of your requests as follows:
+ - If you visit the base URL in browser or incognito mode you may see a response like this:
+   ```json
+   {
+     "detail": "Authentication credentials were not provided."
+   }
+ - This is a normal a normal and expected behavior since the API requires authentication for access.
+
+   ```
+   Authorization
 
 ## Endpoints
 - User Registration: `/api/register/`
