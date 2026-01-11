@@ -36,7 +36,7 @@ class Portfolio(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.name} - {self.user.username}"
+        return f"{self.name} - {self.owner.username}"
 
 
 class Asset(models.Model):
@@ -52,7 +52,7 @@ class Asset(models.Model):
 
 
     def __str__(self):
-        return f"{self.quantity} of {self.symbol} in {self.portfolio.name}"
+        return f"{self.quantity} of {self.coin_id} in {self.portfolio.name}"
     
 class Transaction(models.Model):
     asset = models.ForeignKey(
@@ -65,5 +65,5 @@ class Transaction(models.Model):
     transaction_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.transaction_type} {self.quantity} of {self.asset.symbol} at {self.price_per_unit} on {self.transaction_date}"
+        return f"{self.transaction_type} {self.quantity} of {self.asset.coin_id} at {self.price_per_unit} on {self.transaction_date}"
     

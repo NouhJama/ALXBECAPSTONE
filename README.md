@@ -26,6 +26,7 @@
 - **DRF Nested Routers** (For nested resource routing)
 - **Python Decouple** (For environment variable management)
 - **Pillow** (For image handling, if needed)
+- **Docker & Docker Compose** (For containerization)
 - **Render or Heroku** (For deployment)
 - **Render Redis** (For caching, optional)
 
@@ -47,6 +48,7 @@
 - Pagination for large datasets.✅
 - Portfolio performance analytics (e.g., total value, profit/loss calculations).✅
 - Unit and integration tests to ensure code quality and reliability.✅
+- Dockerized application for easy deployment.✅
 - Render deployment for easy access and scalability.✅
 
 ## SETUP AND INSTALLATION
@@ -135,7 +137,6 @@
 - Mobile app integration for on-the-go portfolio management.
 - Python Unittest and integration tests to ensure code quality and reliability.
 - Redis caching for improved performance.
-- Dockerize the application for easier deployment and scalability.
 - CI/CD pipeline setup for automated testing and deployment.
 - API rate limiting to prevent abuse.
 - Detailed API documentation using Swagger or ReDoc.

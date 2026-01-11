@@ -99,40 +99,13 @@ WSGI_APPLICATION = "crypto_api_project.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASE_URL= config('DATABASE_URL', default=None)
+DATABASE_URL= config('DATABASE_URL')
 
-if DATABASE_URL:
-    # Production: Use PostgreSQL view DATABASE_URL from environment variable
-    DATABASES = {
-        "default": dj_database_url.parse(
-            DATABASE_URL,
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
-    print("Using PostgreSQL Database")
-
-else:
-    # Development: Use MYSQL.
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.mysql",
-            "NAME": config("DATABASE_NAME", default="crypto_portfolio_db"),
-            "USER": config("DATABASE_USER", default="crypto_user"),
-            "PASSWORD": config("DATABASE_PASSWORD", default="crypto_password"),
-            "HOST": config("DATABASE_HOST", default="localhost"),
-            "PORT": config("DATABASE_PORT", default="3306"),
-            "OPTIONS": {
-                "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
-                "charset": "utf8mb4",
-                "use_unicode": True,
-                "collation": "utf8mb4_general_ci",
-            }
-        }
-    }
-    print("Using MySQL Database")
-
-
+DATABASES = {
+    'default': dj_database_url.parse(
+        DATABASE_URL, 
+        conn_max_age=600)
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -183,7 +156,7 @@ REDIS_URL = config('REDIS_URL', default=None)
 if REDIS_URL:
     CACHES = {
         'default': {
-            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'BACKEND': 'django_redis.cache.RedisCache',
             'LOCATION': REDIS_URL,
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
@@ -192,13 +165,10 @@ if REDIS_URL:
                 },
                 'SOCKET_CONNECT_TIMEOUT': 5,  # seconds
                 'SOCKET_TIMEOUT': 5,  # seconds
-                'COMPRESSOR': True,
-                'PARSER_CLASS': 'redis.connection.HiredisParser',
                 'IGNORE_EXCEPTIONS': True, 
             },
             'KEY_PREFIX': 'crypto_portfolio',
             'TIMEOUT': 300,
-            'VERSION': 1,
         }
     }
     print("Using Redis Cache with 30 connections")

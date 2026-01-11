@@ -1,0 +1,52 @@
+#python files
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+
+# environment files
+.env
+.venv/
+.envrc
+.env.*
+
+# virtual environment folders
+venv/
+capstone_venv/
+env/
+
+# Git files
+.git/
+.gitignore
+
+# Database files
+*.sqlite3
+*.db
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Docker files
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Logs and temporary files
+*.log
+tmp/
+*.swp
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+logs/
+
+# Testing files
+coverage/
+.nox/
+.pytest_cache/
+htmlcov/
+

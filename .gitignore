@@ -33,3 +33,12 @@ db.sqlite3-journal
 # os specific files
 .DS_Store
 Thumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
+logs/
+tmp/
+*.bak
+*.swp
+*.backup
