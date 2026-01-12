@@ -34,5 +34,6 @@ EXPOSE 8000
 
 # Start the application (Django with Gunicorn)
 CMD sh -c "python manage.py migrate && \
+           python manage.py createsuperuser --noinput || true && \
            python manage.py collectstatic --no-input && \
            gunicorn crypto_api_project.wsgi:application --bind 0.0.0.0:8000 --workers 3"
