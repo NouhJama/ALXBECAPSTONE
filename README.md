@@ -51,48 +51,47 @@
 - Dockerized application for easy deployment.✅
 - Render deployment for easy access and scalability.✅
 
-## SETUP AND INSTALLATION
+<!-- ## 🚀SETUP AND INSTALLATION -->
+### PRE-REQUISITES
+- Python 3.11 or higher
+- pip (Python package installer)
+- Git
+- Docker and Docker Compose (for containerization, optional)
+- PostgreSQL database (for production)
+- CoinGecko API key (if required for higher rate limits)
+### SETUP AND INSTALLATION
 1. Clone the repository:
    ```bash
-   git clone    
-
-## Authentication
-- Token-based authentication using DRF's built-in token authentication system.
-- Default permission classes set to IsAuthenticated to ensure secure access to API endpoints.   
-2. Navigate to the project directory:
-   ```bash
-   cd crypto_api_project
+   git clone https://github.com/NouhJama/ALXBECAPSTONE.git
+   cd ALXBECAPSTONE
    ```
-3. Create a virtual environment and activate it:
+2. Create a virtual environment and activate it:
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
    ```
-4. Install the required packages:
+3. Install the required packages:
    ```bash
    pip install -r requirements.txt
-    ```
-
-5. Apply migrations to set up the database:
-   ```bash
-   python manage.py migrate
    ```
-6. Create a superuser for admin access:
+4. Create environment variables:
+   - Create a `.env` file in the project root and add the necessary environment variables (e.g., SECRET_KEY, DATABASE settings).
+5. Start the docker containers:
    ```bash
-   python manage.py createsuperuser
+   docker-compose up --build -d
    ```
+**What does this do?**
+- ✅Builds the Docker images and starts the containers for the application and database.
+- ✅Runs database migrations to set up the database schema.
+- ✅Creates a superuser for accessing the Django admin interface.
+- ✅Collects static files for production use.
 
-7. Configure environment variables:
-   - Create a `.env` file in the project root and add the necessary environment variables (e.g., SECRET_KEY, DATABASE settings). 
+========================================
+Starting the Gunicorn server...
+========================================
+[info] Listening on: http://0.0.0.0:8000
+========================================
 
-9. Obtain a CoinGecko API key (if required) and add it to your environment variables.
-
-10. (Optional) Configure caching settings in `settings.py` if using caching.
-
-11. Run the development server:
-   ```bash
-   python manage.py runserver
-   ```
 ### AUTHENTICAITON AND API Access
  - The API endpoints are secured using token-based authentication.
  - Users must register and obtain an authentication token to access the API.
@@ -136,7 +135,6 @@
 - Frontend integration using React or Vue.js.
 - Mobile app integration for on-the-go portfolio management.
 - Python Unittest and integration tests to ensure code quality and reliability.
-- Redis caching for improved performance.
 - CI/CD pipeline setup for automated testing and deployment.
 - API rate limiting to prevent abuse.
 - Detailed API documentation using Swagger or ReDoc.
