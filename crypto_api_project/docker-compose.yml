@@ -20,7 +20,7 @@ services:
 
   # Redis Cache
   redis:
-    image: redis:7.0-alpine
+    image: redis:7.4-alpine
     container_name: crypto_redis_cache
     ports:
       - "6379:6379"

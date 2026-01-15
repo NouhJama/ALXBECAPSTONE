@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 from decouple import config
 import dj_database_url
+from datetime import timedelta
 
 # API Key for CoinGecko 
 COIN_GECKO_API_KEY = config('COINGECKO_API_KEY', default='your-coingecko-api-key')
@@ -41,13 +42,19 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
-        "rest_framework.authentication.TokenAuthentication",    
+        "rest_framework_simplejwt.authentication.JWTAuthentication",  
     ],
 
     "DEFAULT_PAGINATION_CLASS": "portfolio.pagination.TransactionCursorPagination",
     "PAGE_SIZE": 100,
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
 
@@ -60,7 +67,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    "rest_framework.authtoken",
+    "rest_framework_simplejwt.token_blacklist",
     "portfolio",
 ]
 

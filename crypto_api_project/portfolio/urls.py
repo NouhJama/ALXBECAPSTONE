@@ -1,5 +1,12 @@
 from django.urls import path, include
-from .views import UserCreateView, LoginView, PortfolioViewSet, AssetViewSet, TransactionViewSet, UserProfileViewSet, PortfolioTransactionsViewSet
+from .views import (
+    UserCreateView, 
+    PortfolioViewSet, 
+    AssetViewSet, TransactionViewSet, 
+    UserProfileViewSet, 
+    PortfolioTransactionsViewSet,
+    LogoutView
+)
 from rest_framework.routers import DefaultRouter
 from rest_framework_nested.routers import NestedDefaultRouter
 
@@ -24,7 +31,7 @@ portfolio_transactions_router.register(r'transactions', PortfolioTransactionsVie
 
 urlpatterns = [
     path("register/", UserCreateView.as_view(), name="user-register"),
-    path("login/", LoginView.as_view(), name="user-login"),
+    path("logout/", LogoutView.as_view(), name="user-logout"),
     ]
 
 urlpatterns += router.urls

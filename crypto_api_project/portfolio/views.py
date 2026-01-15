@@ -8,15 +8,15 @@ from .serializers import (
     AssetSerializer, TransactionSerializer, UserProfileSerializer 
 )
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from rest_framework.authtoken.views import ObtainAuthToken
 from .models import Portfolio, Asset, Transaction, UserProfile
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework import status
 from portfolio.services.coingecko import get_coin_price
 from django.db import transaction
 from portfolio.pagination import TransactionCursorPagination, AssetCursorPagination
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.views import APIView
 
 # Create your views here.
 class UserCreateView(CreateAPIView):
@@ -33,19 +33,26 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         # Limit profiles to the authenticated user
         return self.queryset.filter(user=self.request.user)
 
-class LoginView(ObtainAuthToken):
-    def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data,
-         context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        # Create or retrieve token
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({
-            'token': token.key,
-            'user_id': user.pk,
-            'username': user.username
-        })
+# Logout view to blacklist the refresh token
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        # Delete the user's token to log them out
+        try:
+            # Get/extract the token from the request header
+            refresh_token = request.data.get("refresh")
+            if not refresh_token:
+                return Response({'detail': 'Refresh token is required.'}, 
+                                status=status.HTTP_400_BAD_REQUEST)
+            token = RefreshToken(refresh_token)# Store the token
+            token.blacklist()  # Blacklist the refresh token
+            return Response({'detail': 'Successfully logged out.'}, 
+                            status=status.HTTP_200_OK)
+        except Exception:
+            return Response({'detail': 'Error during logout.'}, 
+                            status=status.HTTP_400_BAD_REQUEST)
+         
 
 # Portofolio, Asset, and Transaction views would go here
 class PortfolioViewSet(viewsets.ModelViewSet):
