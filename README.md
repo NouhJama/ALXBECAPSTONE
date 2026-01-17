@@ -39,12 +39,13 @@
 - Real-time Cryptocurrency Data Integration.✅
 - Admin Interface for Managing Users and Portfolios.✅
 - CRUD Operations for Portfolios, Assets, and Transactions.✅
-- Token-based Authentication.✅
 - Secure API Endpoints with Permissions.✅
 - Data Validation and Error Handling.✅
 - External API Integration with CoinGecko for live.cryptocurrency prices.✅
 - Price snapshots per transaction to maintain historical accuracy
 - Caching of cryptocurrency data to reduce API calls and improve performance.✅
+- JWT Authentication for enhanced security.✅
+- Throttling to prevent abuse of API endpoints.✅
 - Pagination for large datasets.✅
 - Portfolio performance analytics (e.g., total value, profit/loss calculations).✅
 - Unit and integration tests to ensure code quality and reliability.✅
@@ -130,7 +131,6 @@ Starting the Gunicorn server...
 - Implement advanced analytics and reporting features.
 - Enhance security measures, such as two-factor authentication.
 - Improve the user interface for better usability.
-- Upgrade to use JWT authentication for better security.
 - Portfolio level analytics and reporting.
 - Frontend integration using React or Vue.js.
 - Mobile app integration for on-the-go portfolio management.
