@@ -16,6 +16,8 @@ from portfolio.services.coingecko import get_coin_price
 from django.db import transaction
 from portfolio.pagination import TransactionCursorPagination, AssetCursorPagination
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .throttles import LoginRateThrottle
 from rest_framework.views import APIView
 
 # Create your views here.
@@ -32,6 +34,10 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         # Limit profiles to the authenticated user
         return self.queryset.filter(user=self.request.user)
+    
+# Login view with JWT token generation
+class ThrottledTokenObtainPairView(TokenObtainPairView):
+    throttle_classes = [LoginRateThrottle]
 
 # Logout view to blacklist the refresh token
 class LogoutView(APIView):
