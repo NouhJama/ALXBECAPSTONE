@@ -45,6 +45,18 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",  
     ],
 
+    # JWT Throttle settings
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.UserRateThrottle",
+        "rest_framework.throttling.AnonRateThrottle",
+    ],
+
+    "DEFAULT_THROTTLE_RATES": {
+        "user": "1000/day",
+        "anon": "100/day",
+        "login": "5/minute",
+    },
+
     "DEFAULT_PAGINATION_CLASS": "portfolio.pagination.TransactionCursorPagination",
     "PAGE_SIZE": 100,
 }
