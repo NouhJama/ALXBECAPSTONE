@@ -150,7 +150,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+# East Africa Time zone
+TIME_ZONE = config('TIME_ZONE', default='Africa/Nairobi')
 
 USE_I18N = True
 

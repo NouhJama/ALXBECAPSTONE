@@ -39,7 +39,7 @@
 - Real-time Cryptocurrency Data Integration.✅
 - Admin Interface for Managing Users and Portfolios.✅
 - CRUD Operations for Portfolios, Assets, and Transactions.✅
-- Secure API Endpoints with Permissions.✅
+- Secure API Endpoints with  custom Permissions.✅
 - Data Validation and Error Handling.✅
 - External API Integration with CoinGecko for live.cryptocurrency prices.✅
 - Price snapshots per transaction to maintain historical accuracy
@@ -136,7 +136,6 @@ Starting the Gunicorn server...
 - Mobile app integration for on-the-go portfolio management.
 - Python Unittest and integration tests to ensure code quality and reliability.
 - CI/CD pipeline setup for automated testing and deployment.
-- API rate limiting to prevent abuse.
 - Detailed API documentation using Swagger or ReDoc.
 
 
