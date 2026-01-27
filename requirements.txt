@@ -21,5 +21,7 @@ whitenoise==6.11.0
 psycopg2-binary==2.9.11
 gevent==25.9.1
 djangorestframework-simplejwt==5.5.1
+drf-spectacular==0.29.0
+
 
 

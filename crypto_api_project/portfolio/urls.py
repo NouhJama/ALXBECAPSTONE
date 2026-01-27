@@ -9,6 +9,11 @@ from .views import (
 )
 from rest_framework.routers import DefaultRouter
 from rest_framework_nested.routers import NestedDefaultRouter
+from drf_spectacular.views import(
+    SpectacularAPIView, 
+    SpectacularRedocView, 
+    SpectacularSwaggerView
+)
 
 
 router = DefaultRouter()
@@ -30,9 +35,15 @@ portfolio_transactions_router = NestedDefaultRouter(router, r'portfolios', looku
 portfolio_transactions_router.register(r'transactions', PortfolioTransactionsViewSet, basename='portfolio-transactions')
 
 urlpatterns = [
+    # User registration and authentication routes
     path("register/", UserCreateView.as_view(), name="user-register"),
     path("logout/", LogoutView.as_view(), name="user-logout"),
-    ]
+
+    # API schema and documentation routes
+    path('schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+]
 
 urlpatterns += router.urls
 urlpatterns += asset_router.urls
