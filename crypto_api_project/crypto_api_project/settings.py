@@ -16,6 +16,8 @@ from decouple import config
 import dj_database_url
 from datetime import timedelta
 
+import django
+
 # API Key for CoinGecko 
 COIN_GECKO_API_KEY = config('COINGECKO_API_KEY', default='your-coingecko-api-key')
 
@@ -61,6 +63,57 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 100,
 }
 
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': config('LOG_LEVEL', default='INFO'),
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'portfolio': {
+            'handlers': ['console'],
+            'level': config('LOG_LEVEL', default='INFO'),
+            'propagate': False, # Prevent double logging, stop here, don't go to parent(root) logger
+        },
+        'django': {
+            'handlers': ['console'],
+            'level': config('LOG_LEVEL', default='INFO'),
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+    }
+}
+
+
+# Simple JWT Configuration
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),

@@ -13,6 +13,7 @@ from .models import Portfolio, Asset, Transaction, UserProfile
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework import status
 from portfolio.services.coingecko import get_coin_price
+from portfolio.services.request_meta import get_client_ip
 from django.db import transaction
 from portfolio.pagination import TransactionCursorPagination, AssetCursorPagination
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -24,6 +25,11 @@ from .permissions import (
     IsAssetOwner,
     IsTransactionOwner
 )
+import logging
+
+# Create a logger for this module
+logger = logging.getLogger(__name__)
+
 
 # Create your views here.
 class UserCreateView(CreateAPIView):
@@ -82,6 +88,13 @@ class PortfolioViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # Automatically set the owner to the logged-in user
         serializer.save(owner=self.request.user)
+        client_ip = get_client_ip(self.request)
+        logger.info(
+            "PORTFOLIO_CREATED - User: %s, Portfolio ID: %s, IP: %s",
+            self.request.user.username,
+            serializer.instance.id,
+            client_ip
+        )
 
 class AssetViewSet(viewsets.ModelViewSet):
     # Implementation for Asset CRUD operations
@@ -113,12 +126,25 @@ class AssetViewSet(viewsets.ModelViewSet):
         except Portfolio.DoesNotExist:
             raise PermissionDenied("You do not have permission to add assets to this portfolio.")
         serializer.save(portfolio=portfolio_instance)
+        logger.info(
+            "ASSET_CREATED - User: %s, Asset ID: %s, Portfolio ID: %s",
+            self.request.user.username,
+            serializer.instance.id,
+            portfolio_pk
+        )
 
     # Delete an asset and return custome message
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object() # Get the asset instance to be deleted
         symbol = instance.coin_id.upper() # Get the coin symbol for message
         self.perform_destroy(instance) # Delete the asset
+        client_ip = get_client_ip(request)
+        logger.info(
+            "ASSET_DELETED - User: %s, Asset ID: %s, IP: %s",
+            request.user.username,
+            instance.id,
+            client_ip
+        )
         return Response({"detail": f"Asset {symbol} deleted successfully."},
                         status = status.HTTP_200_OK)
     
@@ -194,6 +220,14 @@ class TransactionViewSet(
 
             # check if user is trying to sell more than they own
             if quantity > asset.quantity:
+                client_ip = get_client_ip(self.request)
+                logger.info(
+                    "TRANSACTION_FAILED - User: %s, Asset ID: %s, Attempted Sell Quantity: %s, IP: %s",
+                    self.request.user.username,
+                    asset.id,
+                    quantity,
+                    client_ip
+                )
                 raise ValidationError("Insufficient balance.")
             
             # Calculate realized profit/loss for the sold quantity
@@ -209,6 +243,15 @@ class TransactionViewSet(
 
             )
         asset.save()
+        client_ip = get_client_ip(self.request)
+        logger.info(
+            "TRANSACTION_CREATED - User: %s, Transaction ID: %s, Asset ID: %s, Type: %s, IP: %s",
+            self.request.user.username,
+            serializer.instance.id,
+            asset.id,
+            transaction_type,
+            client_ip
+        )
 
 # Portfolio specific view to get list of transactions
 class PortfolioTransactionsViewSet(viewsets.ReadOnlyModelViewSet):

@@ -51,6 +51,7 @@
 - Unit and integration tests to ensure code quality and reliability.✅
 - Dockerized application for easy deployment.✅
 - Render deployment for easy access and scalability.✅
+- Logging of important events and errors for monitoring and debugging.✅
 
 <!-- ## 🚀SETUP AND INSTALLATION -->
 ### PRE-REQUISITES
@@ -137,6 +138,9 @@ Starting the Gunicorn server...
 - Python Unittest and integration tests to ensure code quality and reliability.
 - CI/CD pipeline setup for automated testing and deployment.
 - Detailed API documentation using Swagger or ReDoc.
+- Implement WebSocket support for real-time updates on portfolio values.
+- Add support for multiple fiat currencies and automatic conversion.
+- Implement social login options (e.g., Google, Facebook) for easier user registration and authentication.
 
 
 
