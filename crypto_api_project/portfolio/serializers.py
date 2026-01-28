@@ -33,7 +33,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         user = get_user_model().objects.create_user(**validated_data)
         user.set_password(password)
         phone_number = validated_data.get('phone_number')
-        
+
         user.save()
         return user
 
@@ -63,7 +63,7 @@ class AssetSerializer(serializers.ModelSerializer):
         model = Asset
         fields = ['id', 'portfolio', 'coin_id', 'quantity', 'average_buy_price', 'realized_profit_loss', 
                   'unrealized_profit_loss', 'current_value', 'created_at', 'update_at'] 
-        read_only_fields = ['id', 'portfolio', 'created_at', 'realized_profit_loss', 'update_at']
+        read_only_fields = ['id', 'portfolio', 'created_at', 'quantity', 'average_buy_price', 'realized_profit_loss', 'update_at', 'unrealized_profit_loss',]
         ordering = ['-update_at', 'id']
 
     # Calculate unrealized profit/loss and current value
