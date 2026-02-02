@@ -4,7 +4,7 @@ from .models import  Portfolio, Asset, Transaction, UserProfile
 from django.contrib.auth import get_user_model
 from portfolio.services.coingecko import get_coin_price
 from decimal import Decimal
-
+from PIL import Image # For image validation
 
 # User Serializer
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -44,6 +44,37 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = ['id', 'phone_number', 'bio', 'profile_picture', 'preferred_currency']
         ordering = ['id']
+
+    """ 
+    -Validate profile picture size and type if needed.
+    -Allow only extentions like .jpg, .png, .webp and limit size to 2MB.
+    """
+    def validate_profile_picture(self, value):
+        max_size = 2 * 1024 * 1024  # 2MB
+        valid_extensions = ['jpg', 'jpeg', 'png', 'webp']
+        min_dimension = 200  # Minimum width and height in pixels
+        max_dimension = 2000  # Maximum width and height in pixels
+
+
+        if value.size > max_size:
+            raise serializers.ValidationError("Profile picture size should not exceed 2MB.")
+        
+        extension = value.name.split('.')[-1].lower()
+        if extension not in valid_extensions:
+            raise serializers.ValidationError("Unsupported file extension. Allowed extensions: jpg, jpeg, png, webp.")
+
+        # Validate image dimensions
+        try:
+            image = Image.open(value)
+            width, height = image.size
+            if width < min_dimension or height < min_dimension:
+                raise serializers.ValidationError(f"Image dimensions should be at least {min_dimension}px by {min_dimension}px.")
+            if width > max_dimension or height > max_dimension:
+                raise serializers.ValidationError(f"Image dimensions should not exceed {max_dimension}px by {max_dimension}px.")
+        except Exception as e:
+            raise serializers.ValidationError("Invalid image file.")
+        
+        return value
 
     
 # Portfolio Serializer
