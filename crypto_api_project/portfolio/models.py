@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 import requests
+from django.utils import timezone
 
 
 # Create your models here.
@@ -38,6 +39,14 @@ class Portfolio(models.Model):
     )
     name = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=True)
+    deleted_at = models.DateTimeField(blank=True, null=True)
+
+    # soft delete method
+    def soft_delete(self):
+        self.active = False
+        self.deleted_at = timezone.now()
+        self.save()
 
     def __str__(self):
         return f"{self.name} - {self.owner.username}"
@@ -45,7 +54,10 @@ class Portfolio(models.Model):
 
 class Asset(models.Model):
     portfolio = models.ForeignKey(
-        Portfolio, on_delete=models.CASCADE, related_name="assets"
+        Portfolio, on_delete=models.SET_NULL,
+        related_name="assets",
+        null=True, # Required to allow SET_NULL
+        blank=True # Optional in forms
     )
     coin_id = models.CharField(max_length=100)  # CoinGecko coin ID
     quantity = models.DecimalField(max_digits=20, decimal_places=8, default=0.00)
@@ -60,7 +72,7 @@ class Asset(models.Model):
     
 class Transaction(models.Model):
     asset = models.ForeignKey(
-        Asset, on_delete=models.CASCADE, related_name="transactions"
+        Asset, on_delete=models.PROTECT, related_name="transactions", null=True, blank=True
     )
     transaction_type = models.CharField(max_length=10, choices=[("BUY", "Buy"), ("SELL", "Sell")])
     quantity = models.DecimalField(max_digits=20, decimal_places=8)

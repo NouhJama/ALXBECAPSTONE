@@ -96,6 +96,29 @@ class PortfolioViewSet(viewsets.ModelViewSet):
             client_ip
         )
 
+    # soft delete portfolio
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object() # Get the portfolio instance to be deleted
+        instance_name = instance.name # Get the portfolio name for message  
+        # Count associated transactions before deletion for logging
+        transaction_count = Transaction.objects.filter(
+            asset__portfolio=instance
+        ).count()
+
+        instance.soft_delete() # Soft delete the portfolio
+        client_ip = get_client_ip(request)
+        logger.info(
+            "PORTFOLIO_DELETED - User: %s, Portfolio ID: %s, Portfolio Name: %s, Transactions Affected: %d, IP: %s",
+            request.user.username,
+            instance.id,
+            instance_name,
+            transaction_count,
+            client_ip
+        )
+        return Response({"detail": f"Portfolio '{instance_name}' deleted successfully.",
+                        "transactions_affected": transaction_count},
+                        status = status.HTTP_200_OK)
+
 class AssetViewSet(viewsets.ModelViewSet):
     # Implementation for Asset CRUD operations
     serializer_class = AssetSerializer
